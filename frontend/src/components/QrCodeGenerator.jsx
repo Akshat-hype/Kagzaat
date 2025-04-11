@@ -20,7 +20,7 @@ const QRCodeGenerator = () => {
 
   return (
     <div className="qr-generator-container">
-      <h1 className="title">QR Code Generator</h1>
+      {/* <h1 className="title">QR Code Generator</h1>
 
       <input
         type="text"
@@ -32,7 +32,7 @@ const QRCodeGenerator = () => {
 
       <button onClick={handleGenerateQRCode} className="generate-button">
         Generate QR Code
-      </button>
+      </button> */}
 
       {showQRCode && (
         <div className="qr-code-section">
