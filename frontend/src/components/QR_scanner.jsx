@@ -6,6 +6,7 @@ import { Html5Qrcode } from "html5-qrcode";
 const QrScanner = ({ onScanSuccess, onScanFailure }) => {
   const scannerRef = useRef(null);
   const html5QrCodeRef = useRef(null);
+  
 
   useEffect(() => {
     if (!scannerRef.current) return;

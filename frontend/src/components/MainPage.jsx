@@ -6,10 +6,10 @@ import DashBoard from "./DashBoard";
 
 import React from "react";
 
-export default function MainPage() {
+export default function MainPage({ userName }) {
   return (
     <div>
-      <Navbar />
+      <Navbar user={ userName }/>
       <Card />
       <GettingStarted />
       <DashBoard />

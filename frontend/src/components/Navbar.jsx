@@ -6,7 +6,7 @@ import p1 from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 
 
-export default function Navbar() {
+export default function Navbar({user}) {
   return (
     <div className="flex items-center bg-[#00509d] p-4 text-white">
       <img
@@ -29,7 +29,7 @@ export default function Navbar() {
             </i>
             <h6>Scan</h6>
           </div>
-          |<h1 className="font-bold ml-6 mr-6">Kushagra Saraf</h1>
+          |<h1 className="font-bold ml-6 mr-6">{user}</h1>
           <RxAvatar className="text-4xl" />
         </nav>
       </span>
