@@ -6,13 +6,18 @@ function App() {
     <div className="min-h-screen flex flex-col ">
       <footer className="bg-gradient-to-br from-[#3d348b] to-[#00509d] text-white py-8">
         <div className="container mx-auto px-4">
-
           <div className="flex mb-8 gap-4 ">
             <div className="w-full md:w-2/6 mb-4 md:mb-0">
-              <h1 className="font-semibold text-gray-100 mb-4 text-xl">Kaagzaad</h1>
-              <h6 className="md:w-3/4 text-xxl">Kaagzaad aims at 'Digital Empowerment' by providing access to authentic digital documents to the citizen's digital document wallet.</h6>
+              <h1 className="font-semibold text-gray-100 mb-4 text-xl">
+                Kaagzaad
+              </h1>
+              <h6 className="md:w-3/4 text-xxl">
+                Kaagzaad aims at 'Digital Empowerment' by providing access to
+                authentic digital documents to the citizen's digital document
+                wallet.
+              </h6>
 
-              <h3 className="mt-4 mb-4" >Follow us:</h3>
+              <h3 className="mt-4 mb-4">Follow us:</h3>
               <div className="flex space-x-3">
                 <a
                   href="www.facebook.com"
@@ -39,24 +44,80 @@ function App() {
             </div>
             <div className="w-full md:w-1/6 mb-4 md:mb-0">
               <ul className="space-y-3 text-sm">
-                <li><a href="#!" className="hover:text-gray-300">About</a></li>
-                <li><a href="#!" className="hover:text-gray-300">About Us</a></li>
-                <li><a href="#!" className="hover:text-gray-300">FAQ</a></li>
-                <li><a href="#!" className="hover:text-gray-300">Statistics</a></li>
-                <li><a href="#!" className="hover:text-gray-300">Resources</a></li>
-                <li><a href="#!" className="hover:text-gray-300">Circulars</a></li>
-                <li><a href="#!" className="hover:text-gray-300">Sitemap</a></li>
+                <li>
+                  <a href="#!" className="hover:text-gray-300">
+                    About
+                  </a>
+                </li>
+                <li>
+                  <a href="#!" className="hover:text-gray-300">
+                    About Us
+                  </a>
+                </li>
+                <li>
+                  <a href="#!" className="hover:text-gray-300">
+                    FAQ
+                  </a>
+                </li>
+                <li>
+                  <a href="#!" className="hover:text-gray-300">
+                    Statistics
+                  </a>
+                </li>
+                <li>
+                  <a href="#!" className="hover:text-gray-300">
+                    Resources
+                  </a>
+                </li>
+                <li>
+                  <a href="#!" className="hover:text-gray-300">
+                    Circulars
+                  </a>
+                </li>
+                <li>
+                  <a href="#!" className="hover:text-gray-300">
+                    Sitemap
+                  </a>
+                </li>
               </ul>
             </div>
             <div className="w-full md:w-1/6 mb-4 md:mb-0">
               <ul className="space-y-3 text-sm ">
-                <li><a href="#!" className="hover:text-gray-300">Need Help?</a></li>
-                <li><a href="#!" className="hover:text-gray-300">Careers</a></li>
-                <li><a href="#!" className="hover:text-gray-300">Feedback</a></li>
-                <li><a href="#!" className="hover:text-gray-300">Team</a></li>
-                <li><a href="#!" className="hover:text-gray-300">MeriPachaan</a></li>
-                <li><a href="#!" className="hover:text-gray-300">Discover</a></li>
-                <li><a href="#!" className="hover:text-gray-300">Privacy</a></li>
+                <li>
+                  <a href="#!" className="hover:text-gray-300">
+                    Need Help?
+                  </a>
+                </li>
+                <li>
+                  <a href="#!" className="hover:text-gray-300">
+                    Careers
+                  </a>
+                </li>
+                <li>
+                  <a href="#!" className="hover:text-gray-300">
+                    Feedback
+                  </a>
+                </li>
+                <li>
+                  <a href="#!" className="hover:text-gray-300">
+                    Team
+                  </a>
+                </li>
+                <li>
+                  <a href="#!" className="hover:text-gray-300">
+                    MeriPachaan
+                  </a>
+                </li>
+                <li>
+                  <a href="#!" className="hover:text-gray-300">
+                    Discover
+                  </a>
+                </li>
+                <li>
+                  <a href="#!" className="hover:text-gray-300">
+                    Privacy
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
