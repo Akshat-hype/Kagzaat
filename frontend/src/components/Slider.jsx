@@ -10,9 +10,12 @@ const Slider = ({ cards = [] }) => {
     const interval = setInterval(() => {
       if (!scrollContainer) return;
       scrollContainer.scrollLeft += scrollAmount;
+      const isMobile = window.innerWidth <= 768;
+      const adjustedScrollAmount = isMobile ? scrollAmount / 2 : scrollAmount;
+
       if (
         scrollContainer.scrollLeft >=
-        scrollContainer.scrollWidth - scrollContainer.clientWidth - scrollAmount
+        scrollContainer.scrollWidth - scrollContainer.clientWidth - adjustedScrollAmount
       ) {
         scrollContainer.scrollTo({ left: 0, behavior: 'smooth' });
       }

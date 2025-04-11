@@ -14,12 +14,14 @@ const Dashboard = () => {
     { title: 'Electric Bill' },
   ];
 
-return (
+  return (
     <div className="p-6">
-        <h2 className="text-xl font-bold mb-4 text-center">Your Documents</h2>
+      <h2 className="text-xl font-bold mb-4 text-center">Your Documents</h2>
+      <div className="max-w-screen-lg mx-auto">
         <Slider cards={docs} />
+      </div>
     </div>
-);
+  );
 };
 
 export default Dashboard;

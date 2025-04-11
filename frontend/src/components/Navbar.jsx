@@ -6,13 +6,11 @@ import p1 from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 
 
-export default function Navbar({user}) {
+export default function Navbar({ user }) {
   return (
     <div className="flex items-center bg-[#00509d] p-4 text-white">
       <img
-        src={p1}
-        alt="Logo"
-        className="h-10 w-10 rounded-full"
+        src={p1} alt="Logo" className="h-10 w-10 rounded-full"
       />
       <span className="text-2xl font-bold ml-2">Kagzaat</span>
       <span className="ml-auto">

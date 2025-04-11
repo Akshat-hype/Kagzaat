@@ -1,19 +1,40 @@
+// import Button from "./Button";
+
+// export default function App() {
+//   return (
+//       <div className=" w-full  bg-blue-500/30 p-8 mb-20">
+//         <h2 className="text-xl font-bold mb-4 text-center">Add More Documents</h2>
+//         <div className="flex gap-40 ml-16">
+//           <Button>ADHAAR CARD</Button>
+//           <Button>10TH MARKSHEET</Button>
+//           <Button>12TH MARKSHEET</Button>
+//         </div>
+//         <div className="flex gap-40 ml-16">
+//           <Button>PAN CARD</Button>
+//           <Button>CREDIT CARD</Button>
+//           <Button>RATION CARD</Button>
+//         </div>
+//       </div>
+//   );
+// }
+
+
 import Button from "./Button";
 
 export default function App() {
   return (
-      <div className=" w-full  bg-blue-500/30 p-8 mb-20">
-        <h2 className="text-xl font-bold mb-4 text-center">Add More Documents</h2>
-        <div className="flex gap-50 ml-16">
-          <Button>ADHAAR CARD</Button>
-          <Button>12TH MARKSHEET</Button>
-          <Button>10TH MARKSHEET</Button>
-        </div>
-        <div className="flex gap-50 ml-16">
-          <Button>PAN CARD</Button>
-          <Button>DEBIT CARD</Button>
-          <Button>ADHAAR CARD</Button>
-        </div>
+    <div className="w-full bg-blue-500/30 p-8 mb-20">
+      <h2 className="text-xl font-bold mb-6 text-center">Add More Documents</h2>
+      
+      {/* Reduced vertical spacing with gap-y-2 */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-2 max-w-5xl mx-auto">
+        <Button>ADHAAR CARD</Button>
+        <Button>10TH MARKSHEET</Button>
+        <Button>12TH MARKSHEET</Button>
+        <Button>PAN CARD</Button>
+        <Button>CREDIT CARD</Button>
+        <Button>RATION CARD</Button>
       </div>
+    </div>
   );
 }

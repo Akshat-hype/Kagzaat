@@ -18,10 +18,9 @@ const FileUploadCard = () => {
     const handleDragOver = (e) => e.preventDefault();
 
     return (
-        <div className="flex bg-gray-100 backdrop-blur-md p-4 m-20 rounded-2xl shadow-lg">
-            {/* Header */}
-            <span className='w-1/2 p-8'>
-                {/* LEFT SIDE  */}
+        <div className="flex flex-col lg:flex-row bg-gray-100 backdrop-blur-md p-4 lg:p-8 m-4 lg:m-20 rounded-2xl shadow-lg">
+            {/* LEFT SIDE */}
+            <span className="w-full lg:w-1/2 p-4 lg:p-8">
                 <div className="flex justify-between items-center mb-4">
                     <div>
                         <h2 className="text-lg font-semibold">Upload files</h2>
@@ -61,44 +60,37 @@ const FileUploadCard = () => {
                         Upload
                     </button>
                 </div>
-                </span>
+            </span>
 
+            {/* RIGHT SIDE */}
+            <span className="w-full lg:w-1/2 p-4 lg:p-8">
+                <div
+                    className={`border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer ${files.length === 0 ? "hover:border-blue-400" : "cursor-not-allowed"
+                        } transition`}
+                    onClick={() => files.length === 0 && fileInputRef.current.click()}
+                    onDrop={(e) => files.length === 0 && handleDrop(e)}
+                    onDragOver={handleDragOver}
+                >
+                    <div className="text-4xl mb-2">🌥️</div>
+                    <p className="font-medium">Choose a file or drag & drop it here</p>
+                    <p className="text-xs text-gray-400">JPEG, PNG, PDF, MP4 – up to 50MB</p>
 
-                {/* RIGHT SIDE */}
-                <span className='w-1/2 p-8'>
-                    <div
-                        className={`border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer ${files.length === 0 ? "hover:border-blue-400" : "cursor-not-allowed"
-                            } transition`}
-                        onClick={() => files.length === 0 && fileInputRef.current.click()}
-                        onDrop={(e) => files.length === 0 && handleDrop(e)}
-                        onDragOver={handleDragOver}
+                    <button
+                        className="mt-4 border px-4 py-1 rounded-md text-sm text-blue-500 border-blue-300 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={files.length > 0}
                     >
-                        <div className="text-4xl mb-2">🌥️</div>
-                        <p className="font-medium">Choose a file or drag & drop it here</p>
-                        <p className="text-xs text-gray-400">JPEG, PNG, PDF, MP4 – up to 50MB</p>
-
-                        <button
-                            className="mt-4 border px-4 py-1 rounded-md text-sm text-blue-500 border-blue-300 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                            disabled={files.length > 0}
-                        >
-                            Browse File
-                        </button>
-                        <input
-                            type="file"
-                            className="hidden"
-                            multiple={false}
-                            ref={fileInputRef}
-                            onChange={handleFileChange}
-                        />
-                    </div>
-                </span>
-            </div>
-
-
-
-
-
-        
+                        Browse File
+                    </button>
+                    <input
+                        type="file"
+                        className="hidden"
+                        multiple={false}
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                    />
+                </div>
+            </span>
+        </div>
     );
 };
 
