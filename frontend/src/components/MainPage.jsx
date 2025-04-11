@@ -12,9 +12,9 @@ export default function MainPage({ userName }) {
     <div>
       <Navbar user={ userName }/>
       <Card />
-      <More />
-      <GettingStarted />
       <DashBoard />
+      <GettingStarted />
+      <More />
       <Footer />
     </div>
   );

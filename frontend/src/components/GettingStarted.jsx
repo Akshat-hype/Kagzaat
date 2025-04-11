@@ -5,9 +5,9 @@ import p3 from '../assets/DOWNLOAD.svg'
 import { FaArrowRight } from "react-icons/fa";
 export default function Lol() {
 return (
-    <div className='flex p-4  bg-blue-500/30 mt-20 shadow-lg '>
-        <div className='flex flex-col justify-center w-1/6 ml-28 h-44 text-2xl  '>
-            Getting Started with Kaagzad
+    <div className='flex p-4 bg-blue-500/30 mb-20 mt-20 justify-center '>
+        <div className='flex flex-col justify-center w-1/6  h-44 text-2xl  '>
+            Getting Started with Kagzaat
         </div>
         <div className='flex justify-center ml-24 items-center gap-16'>
             <img src={p1} alt="" className='' />

@@ -6,8 +6,8 @@ export default function Card() {
       <div class="p-4 m-20 flex justify-between bg-[#00509d] rounded-3xl shadow-lg">
         <span class="text-xs p-10">
           <h1 class="text-5xl font-bold text-white">Aadhar Card</h1>
-          <h2 class="text-2xl my-12">Your Name</h2>
-          <h3 class="text-2xl my-12">XXXX XXXX XXXX</h3>
+          <h2 class="text-2xl font-bold text-white my-12">Your Name</h2>
+          <h3 class="text-2xl font-bold text-white my-12">XXXX XXXX XXXX</h3>
         </span>
         <span class="flex justify-end">
           <img

@@ -14,7 +14,7 @@ export default function Navbar({user}) {
         alt="Logo"
         className="h-10 w-10 rounded-full"
       />
-      <span className="text-2xl font-bold ml-2">Kaagzad</span>
+      <span className="text-2xl font-bold ml-2">Kagzaat</span>
       <span className="ml-auto">
         <nav className="space-x-4 flex text-2xl mt-4">
           <div
