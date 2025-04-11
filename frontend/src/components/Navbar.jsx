@@ -1,6 +1,7 @@
 import React from "react";
 import { IoScanOutline } from "react-icons/io5";
 import { RxAvatar } from "react-icons/rx";
+import { MdNoteAdd } from "react-icons/md";
 import p1 from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 
