@@ -37,11 +37,18 @@ const QrScanner = ({ onScanSuccess, onScanFailure }) => {
     };
   }, [onScanSuccess, onScanFailure]);
 
-  return (
-    <div>
-      <div id="qr-scanner" ref={scannerRef} />
-    </div>
-  );
+  return () => {
+    async function cleanup() {
+      if (html5QrCodeRef.current) {
+        if (html5QrCodeRef.current.isScanning) {
+          await html5QrCodeRef.current.stop();
+        }
+        await html5QrCodeRef.current.clear();
+      }
+    }
+    cleanup();
+  };
+  
 };
 
 export default QrScanner;

@@ -4,6 +4,7 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 // import { getFirestore } from "firebase/firestore";
 
+
 // Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyAojt3XwMXgVAKQIMIX8JeUaiJaoOlyBWY",

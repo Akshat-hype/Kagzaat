@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import QRCode from "qrcode.react";
+import QRCode from "react-qr-code"; // ✅ Use react-qr-code
 
 const QRCodeGenerator = () => {
   const [url, setUrl] = useState("");
@@ -7,7 +7,7 @@ const QRCodeGenerator = () => {
 
   const handleInputChange = (e) => {
     setUrl(e.target.value);
-    setShowQRCode(false); // Reset QR code visibility when input changes
+    setShowQRCode(false);
   };
 
   const handleGenerateQRCode = () => {
@@ -19,30 +19,28 @@ const QRCodeGenerator = () => {
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>QR Code Generator</h1>
+    <div className="qr-generator-container">
+      <h1 className="title">QR Code Generator</h1>
+
       <input
         type="text"
         placeholder="Enter your URL"
         value={url}
         onChange={handleInputChange}
-        style={{ padding: "10px", width: "300px", fontSize: "16px" }}
+        className="url-input"
       />
-      <br />
-      <button
-        onClick={handleGenerateQRCode}
-        style={{ marginTop: "20px", padding: "10px 20px", fontSize: "16px" }}
-      >
+
+      <button onClick={handleGenerateQRCode} className="generate-button">
         Generate QR Code
       </button>
 
       {showQRCode && (
-        <div style={{ marginTop: "20px" }}>
+        <div className="qr-code-section">
           <QRCode value={url} size={256} />
-          <br />
           <a
             href={`data:text/plain;charset=utf-8,${encodeURIComponent(url)}`}
             download="URL.txt"
+            className="download-link"
           >
             Download URL as TXT
           </a>
