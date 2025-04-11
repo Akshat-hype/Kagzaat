@@ -18,7 +18,7 @@ import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import BadgeRoundedIcon from "@mui/icons-material/BadgeRounded";
 import GoogleIcon from "./GoogleIcon"; // Ensure this path is correct
-import logo from "./cropped-android-chrome-384x384-1-1.webp"; // Update the path if needed
+import logo from "../assets/cropped-android-chrome-384x384-1-1.webp"; // Update the path if needed
 
 function ColorSchemeToggle(props) {
   const { onClick, ...other } = props;
