@@ -19,6 +19,42 @@ import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import BadgeRoundedIcon from "@mui/icons-material/BadgeRounded";
 import GoogleIcon from "./GoogleIcon"; // Ensure this path is correct
 import logo from "../assets/logo.png"; // Update the path if needed
+import { auth, provider, db } from "../firebase";
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+
+
+const handleGoogleSignIn = async () => {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    console.log("Signed in user:", user);
+
+    // Extract the data returned by the Google account
+    const { displayName, email, phoneNumber } = user;
+    // Note: phoneNumber might be null if not provided by Google.
+    
+    // Create a reference to the user's document in the "users" collection
+    const userRef = doc(db, "users", user.uid);
+    
+    // Check if the user document already exists
+    const docSnap = await getDoc(userRef);
+    if (!docSnap.exists()) {
+      // Create a new document with user data if it doesn't exist
+      await setDoc(userRef, {
+        name: displayName,
+        email: email,
+        number: phoneNumber || "" // default to empty string if phone number is not provided
+      });
+      console.log("User document created in Firestore.");
+    } else {
+      console.log("User already exists in Firestore.");
+    }
+  } catch (error) {
+    console.error("Google sign-in error:", error);
+  }
+};
+
 
 function ColorSchemeToggle(props) {
   const { onClick, ...other } = props;
@@ -44,7 +80,7 @@ function ColorSchemeToggle(props) {
   );
 }
 
-const customTheme = extendTheme({ defaultColorScheme: "dark" });
+const customTheme = extendTheme({ defaultColorScheme: "light" });
 
 export default function JoySignInSideTemplate() {
   const handleSubmit = (event) => {
@@ -144,6 +180,7 @@ export default function JoySignInSideTemplate() {
                 color="neutral"
                 fullWidth
                 startDecorator={<GoogleIcon />}
+                onClick={handleGoogleSignIn}
               >
                 Continue with Google
               </Button>
@@ -189,7 +226,7 @@ export default function JoySignInSideTemplate() {
           </Box>
           <Box component="footer" sx={{ py: 3 }}>
             <Typography level="body-xs" sx={{ textAlign: "center" }}>
-              © Boardigital {new Date().getFullYear()}
+              © KagZaat {new Date().getFullYear()}
             </Typography>
           </Box>
         </Box>
