@@ -1,9 +1,13 @@
 import React, { useRef, useState } from "react";
 import axios from "axios";
+import { db } from "../firebase"; // your firebase config file
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 const FileUploadCard = () => {
   const [files, setFiles] = useState([]);
   const [ipfsHash, setIpfsHash] = useState("");
+  const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -24,13 +28,33 @@ const FileUploadCard = () => {
 
   const handleDragOver = (e) => e.preventDefault();
 
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value);
+  };
+
   const handleUpload = async () => {
-    if (files.length === 0) return alert("Please select a file first!");
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      alert("You must be logged in to upload");
+      return;
+    }
+
+    if (files.length === 0 || inputValue.trim() === "") {
+      return alert("Please select a file and enter a document name!");
+    }
+
     setLoading(true);
 
     try {
       const formData = new FormData();
       formData.append("file", files[0]);
+
+      const metadata = JSON.stringify({
+        name: inputValue,
+      });
+      formData.append("pinataMetadata", metadata);
 
       const res = await axios.post(
         "https://api.pinata.cloud/pinning/pinFileToIPFS",
@@ -43,7 +67,18 @@ const FileUploadCard = () => {
         }
       );
 
-      setIpfsHash(res.data.IpfsHash);
+      const hash = res.data.IpfsHash;
+      setIpfsHash(hash);
+
+      await addDoc(collection(db, "users", user.uid, "uploads"), {
+        documentName: inputValue,
+        ipfsHash: hash,
+        createdAt: serverTimestamp(),
+      });
+
+      alert("Document uploaded and saved!");
+      setFiles([]);
+      setInputValue("");
     } catch (error) {
       console.error("Upload failed:", error);
       alert("Upload failed!");
@@ -51,7 +86,7 @@ const FileUploadCard = () => {
 
     setLoading(false);
   };
-
+  
   return (
     <div className="flex flex-col lg:flex-row bg-gray-100 backdrop-blur-md p-4 lg:p-8 m-4 lg:m-20 rounded-2xl shadow-lg">
       {/* LEFT SIDE */}
@@ -131,7 +166,20 @@ const FileUploadCard = () => {
             ref={fileInputRef}
             onChange={handleFileChange}
           />
+          
+          
+          
         </div>
+        <div className="ml-58">
+        <br />
+          <input
+        type="text"
+        value={inputValue}
+        onChange={handleInputChange}
+        placeholder="Document name"
+        required
+      />
+      </div>
       </span>
     </div>
   );
