@@ -4,6 +4,7 @@ import { RxAvatar } from "react-icons/rx";
 import { MdNoteAdd } from "react-icons/md";
 import p1 from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
+import QRScanner from "./QR_scanner";
 
 
 export default function Navbar({ user }) {
@@ -19,7 +20,7 @@ export default function Navbar({ user }) {
             className="text-2xl cursor-pointer"
             onClick={() => {
               const navigate = useNavigate();
-              navigate("/qr_scanner");
+              navigate(<QRScanner/>);
             }}
           >
             <i>

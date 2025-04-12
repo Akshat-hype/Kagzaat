@@ -1,55 +1,51 @@
-// Make sure to install html5-qrcode first: npm install html5-qrcode
+import React, { useEffect, useRef, useState } from "react";
+import { Html5QrcodeScanner } from "html5-qrcode";
 
-import React, { useEffect, useRef } from "react";
-import { Html5Qrcode } from "html5-qrcode";
-
-const QrScanner = ({ onScanSuccess, onScanFailure }) => {
+const QRScanner = () => {
+  const [scanResult, setScanResult] = useState(null);
   const scannerRef = useRef(null);
-  const html5QrCodeRef = useRef(null);
-  
 
   useEffect(() => {
-    if (!scannerRef.current) return;
+    if (!scannerRef.current) {
+      scannerRef.current = new Html5QrcodeScanner(
+        "qr-reader",
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        false
+      );
 
-    const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-    html5QrCodeRef.current = new Html5Qrcode(scannerRef.current.id);
-
-    html5QrCodeRef.current
-      .start(
-        { facingMode: "environment" }, // back camera
-        config,
-        (decodedText, decodedResult) => {
-          if (onScanSuccess) onScanSuccess(decodedText, decodedResult);
+      scannerRef.current.render(
+        (decodedText) => {
+          setScanResult(decodedText);
+          scannerRef.current.clear();
         },
-        (errorMessage) => {
-          if (onScanFailure) onScanFailure(errorMessage);
+        (error) => {
+          console.warn(error);
         }
-      )
-      .catch((err) => {
-        console.error("Failed to start scanning", err);
-      });
-
-    return () => {
-      if (html5QrCodeRef.current) {
-        html5QrCodeRef.current.stop().then(() => {
-          html5QrCodeRef.current.clear();
-        });
-      }
-    };
-  }, [onScanSuccess, onScanFailure]);
-
-  return () => {
-    async function cleanup() {
-      if (html5QrCodeRef.current) {
-        if (html5QrCodeRef.current.isScanning) {
-          await html5QrCodeRef.current.stop();
-        }
-        await html5QrCodeRef.current.clear();
-      }
+      );
     }
-    cleanup();
-  };
-  
+  }, []);
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-white p-6">
+      <h1 className="text-3xl font-extrabold text-blue-600 mb-6">
+        QR Code Scanner
+      </h1>
+
+      {!scanResult ? (
+        <div
+          id="qr-reader"
+          className="w-full max-w-md border-4 border-blue-200 rounded-xl shadow-lg"
+        />
+      ) : (
+        <div className="mt-6 p-4 border border-blue-300 rounded-lg bg-blue-50 text-center shadow">
+          <p className="text-lg text-blue-700 font-semibold mb-2">
+            Scanned Result:
+          </p>
+          <p className="text-blue-900 break-words">{scanResult}</p>
+        </div>
+      )}
+    </div>
+  );
 };
 
-export default QrScanner;
+export default QRScanner;
