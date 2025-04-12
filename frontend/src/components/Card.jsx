@@ -25,7 +25,7 @@ import React from "react";
 
 export default function Card() {
   return (
-    <div className="p-4 m-4 sm:m-6 md:m-10 lg:m-20 bg-[#00509d] rounded-3xl shadow-lg">
+    <div className="p-4 m-4 sm:m-6 md:m-10 lg:m-20 bg-gradient-to-br from-[#3d348b] to-[#00509d] rounded-3xl shadow-lg">
       <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
         {/* Text Section */}
         <div className="flex-1 text-center md:text-left">

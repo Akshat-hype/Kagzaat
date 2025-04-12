@@ -149,7 +149,7 @@ import { FaXTwitter, FaFacebookF, FaInstagram, FaYoutube } from "react-icons/fa6
 
 function Footer() {
   return (
-    <div className="flex flex-col justify-between">
+    <div className="rounded-xl flex flex-col justify-between">
       <footer className="bg-gradient-to-br from-[#3d348b] to-[#00509d] text-white py-10">
         <div className="w-full px-4 md:px-8 xl:px-20 max-w-[1440px] mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10 text-center sm:text-left">

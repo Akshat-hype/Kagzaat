@@ -16,7 +16,11 @@ const Dashboard = () => {
 
   return (
     <div className="p-6">
-      <h2 className="text-xl font-bold mb-4 text-center">Your Documents</h2>
+       <div className="flex items-center my-6">
+      <div className="flex-grow h-1 bg-gradient-to-r from-transparent via-blue-950 to-transparent" />
+      <h2 className="mx-4 text-xl font-bold text-black">Your Documents</h2>
+      <div className="flex-grow h-1 bg-gradient-to-r from-transparent via-blue-950 to-transparent" />
+    </div>
       <div className="max-w-screen-lg mx-auto">
         <Slider cards={docs} />
       </div>

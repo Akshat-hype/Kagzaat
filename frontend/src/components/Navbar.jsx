@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Navbar({ user }) {
   return (
-    <div className="flex items-center bg-[#00509d] p-4 text-white">
+    <div className="rounded-3xl shadow-lg mt-2 flex items-center bg-gradient-to-b from-[#3d348b] to-[#00509d] p-4 text-white">
       <img
         src={p1} alt="Logo" className="h-10 w-10 rounded-full"
       />
