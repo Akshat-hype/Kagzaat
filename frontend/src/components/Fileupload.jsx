@@ -151,7 +151,7 @@ const FileUploadCard = () => {
         >
           <div className="text-4xl mb-2">🌥️</div>
           <p className="font-medium">Choose a file or drag & drop it here</p>
-          <p className="text-xs text-gray-400">JPEG, PNG, PDF, MP4 – up to 50MB</p>
+          <p className="text-xs text-gray-400">JPEG, PNG, PDF – up to 50MB</p>
 
           <button
             className="mt-4 border px-4 py-1 rounded-md text-sm text-blue-500 border-blue-300 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
