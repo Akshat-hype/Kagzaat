@@ -178,7 +178,7 @@ function Footer() {
             {/* Quick Links 1 */}
             <div className="col-span-1">
               <ul className="space-y-3 text-sm">
-                <li><a href="#!" className="hover:text-gray-300">About</a></li>
+                <li><a href="#!" className="hover:text-gray-300 font-bold">About</a></li>
                 <li><a href="#!" className="hover:text-gray-300">About Us</a></li>
                 <li><a href="#!" className="hover:text-gray-300">FAQ</a></li>
                 <li><a href="#!" className="hover:text-gray-300">Statistics</a></li>

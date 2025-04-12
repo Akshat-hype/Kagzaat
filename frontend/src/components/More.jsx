@@ -9,7 +9,7 @@ export default function App() {
 
   return (
 
-    <div className="w-full bg-blue-500/30 p-8 mb-20">
+    <div className="w-full p-8 mb-20">
        <div className="flex items-center my-6">
       <div className="flex-grow h-1 bg-gradient-to-r from-transparent via-blue-950 to-transparent" />
       <h2 className="mx-4 text-xl font-bold text-black">Add More Documents</h2>
