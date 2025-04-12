@@ -1,11 +1,7 @@
 import React from "react";
 import { IoScanOutline } from "react-icons/io5";
 import { RxAvatar } from "react-icons/rx";
-import { MdNoteAdd } from "react-icons/md";
 import p1 from "../assets/logo.png";
-import { useNavigate } from "react-router-dom";
-import QRScanner from "./QR_scanner";
-
 
 export default function Navbar({ user }) {
   return (
@@ -16,18 +12,17 @@ export default function Navbar({ user }) {
       <span className="text-2xl font-bold ml-2">Kagzaat</span>
       <span className="ml-auto">
         <nav className="space-x-4 flex text-2xl mt-4">
-          <div
-            className="text-2xl cursor-pointer"
-            onClick={() => {
-              const navigate = useNavigate();
-              navigate(<QRScanner/>);
-            }}
-          >
-            <i>
-              <IoScanOutline className="ml-3" />
-            </i>
-            <h6>Scan</h6>
-          </div>
+          <a href="/qr">
+            <div
+              className="text-2xl cursor-pointer"
+            >
+              <i>
+                <IoScanOutline className="ml-3" />
+              </i>
+              <h6>Scan</h6>
+            </div>
+          </a>
+
           |<h1 className="font-bold ml-6 mr-6">{user}</h1>
           <RxAvatar className="text-4xl" />
         </nav>
