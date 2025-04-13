@@ -15,7 +15,6 @@ const QRCodeGenerator = ({ url }) => {
           download="URL.txt"
           className="download-link"
         >
-          Download URL as TXT
         </a>
       </div>
     </div>

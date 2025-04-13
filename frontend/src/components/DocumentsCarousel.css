@@ -1,0 +1,26 @@
+/* Smooth transitions for carousel */
+.carousel-container {
+    /* transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); */
+    width: auto;
+    
+  }
+  
+  /* Card shadow enhancements */
+  .shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 
+                0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Active card styling */
+  .active-card {
+    transform: scale(1);
+    opacity: 1;
+    z-index: 10;
+  }
+  
+  /* Inactive card styling */
+  .inactive-card {
+    transform: scale(0.95);
+    opacity: 0.5;
+    z-index: 1;
+  }
