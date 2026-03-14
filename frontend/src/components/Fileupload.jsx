@@ -3,11 +3,23 @@ import axios from "axios";
 import { auth, db } from "../firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
+const DOC_TYPES = [
+  { key: "aadhaar", label: "Aadhaar Card" },
+  { key: "pan", label: "PAN Card" },
+  { key: "passport", label: "Passport" },
+  { key: "driving_licence", label: "Driving Licence" },
+  { key: "voter_id", label: "Voter ID" },
+  { key: "others", label: "Others" },
+];
+
 const FileUploadCard = () => {
   const [files, setFiles] = useState([]);
   const [ipfsHash, setIpfsHash] = useState("");
-  const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
+  const [docType, setDocType] = useState("");
+  const [ocrFields, setOcrFields] = useState(null);
+  const [ocrRawText, setOcrRawText] = useState("");
+  const [ocrLoading, setOcrLoading] = useState(false);
   const fileInputRef = useRef(null);
   const projectId = db.app.options.projectId || "unknown-project";
 
@@ -17,6 +29,8 @@ const FileUploadCard = () => {
     const selected = Array.from(e.target.files);
     setFiles((prev) => [...prev, ...selected]);
     setIpfsHash("");
+    setOcrFields(null);
+    setOcrRawText("");
   };
 
   const handleDrop = (e) => {
@@ -24,14 +38,31 @@ const FileUploadCard = () => {
     const dropped = Array.from(e.dataTransfer.files);
     setFiles((prev) => [...prev, ...dropped]);
     setIpfsHash("");
+    setOcrFields(null);
+    setOcrRawText("");
+  };
+
+  const handleScanOcr = async () => {
+    if (!files[0]) return alert("Please select a file first.");
+    if (!docType) return alert("Please select a document type.");
+
+    setOcrLoading(true);
+    setOcrFields(null);
+    try {
+      const form = new FormData();
+      form.append("file", files[0]);
+      form.append("docType", docType);
+      const { data } = await axios.post("http://localhost:5001/ocr", form);
+      setOcrFields(data.fields);
+      setOcrRawText(data.rawText);
+    } catch (err) {
+      alert("OCR failed: " + (err.response?.data?.error || err.message));
+    } finally {
+      setOcrLoading(false);
+    }
   };
 
   const handleDragOver = (e) => e.preventDefault();
-
-  const handleInputChange = (event) => {
-    setInputValue(event.target.value);
-  };
-
   const handleUpload = async () => {
     const user = auth.currentUser;
 
@@ -40,8 +71,12 @@ const FileUploadCard = () => {
       return;
     }
 
-    if (files.length === 0 || inputValue.trim() === "") {
-      return alert("Please select a file and enter a document name!");
+    if (files.length === 0) {
+      return alert("Please select a file!");
+    }
+
+    if (!docType) {
+      return alert("Please select a document type!");
     }
 
     setLoading(true);
@@ -51,8 +86,10 @@ const FileUploadCard = () => {
       const formData = new FormData();
       formData.append("file", files[0]);
 
+      const docLabel = DOC_TYPES.find((d) => d.key === docType)?.label || docType;
+
       const metadata = JSON.stringify({
-        name: inputValue,
+        name: docLabel,
       });
       formData.append("pinataMetadata", metadata);
 
@@ -72,8 +109,10 @@ const FileUploadCard = () => {
       uploadedIpfsHash = hash;
 
       const uploadPayload = {
-        documentName: inputValue,
+        documentName: docLabel,
+        docType,
         ipfsHash: hash,
+        ocrFields: ocrFields || {},
         ownerUid: user.uid,
         createdAt: serverTimestamp(),
       };
@@ -91,7 +130,10 @@ const FileUploadCard = () => {
 
       alert("Document uploaded and saved!");
       setFiles([]);
-      setInputValue("");
+      setOcrFields(null);
+      setOcrRawText("");
+      setDocType("");
+      setIpfsHash("");
     } catch (error) {
       console.error("Upload failed:", error);
       if (uploadedIpfsHash && error?.code === "permission-denied") {
@@ -125,6 +167,21 @@ const FileUploadCard = () => {
           </div>
         </div>
 
+        {/* Document Type Selector */}
+        <div className="mt-4">
+          <label className="text-sm text-gray-600 font-medium">Document Type</label>
+          <select
+            value={docType}
+            onChange={(e) => { setDocType(e.target.value); setOcrFields(null); }}
+            className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+          >
+            <option value="">-- Select document type --</option>
+            {DOC_TYPES.map((d) => (
+              <option key={d.key} value={d.key}>{d.label}</option>
+            ))}
+          </select>
+        </div>
+
         {/* File List */}
         <div className="mt-6">
           {files.length > 0 ? (
@@ -147,6 +204,36 @@ const FileUploadCard = () => {
           )}
         </div>
 
+        {/* Scan / OCR Button */}
+        <div className="mt-3">
+          <button
+            onClick={handleScanOcr}
+            className="w-full bg-purple-500 text-white py-2 rounded-md hover:bg-purple-600 disabled:opacity-50"
+            disabled={files.length === 0 || !docType || ocrLoading}
+          >
+            {ocrLoading ? "Scanning..." : "Scan & Extract Fields"}
+          </button>
+        </div>
+
+        {/* OCR Extracted Fields */}
+        {ocrFields && (
+          <div className="mt-4 bg-white border border-gray-200 rounded-lg p-4">
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">
+              Extracted Fields — {DOC_TYPES.find((d) => d.key === docType)?.label}
+            </h3>
+            <ul className="text-sm text-gray-700 space-y-1">
+              {Object.entries(ocrFields).map(([key, val]) => (
+                <li key={key} className="flex gap-2">
+                  <span className="font-medium capitalize">{key.replace(/([A-Z])/g, " $1")}:</span>
+                  <span className="text-gray-600">
+                    {typeof val === "object" ? JSON.stringify(val) : val}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         {/* Upload Button */}
         <div>
           <button
@@ -154,7 +241,7 @@ const FileUploadCard = () => {
             className="mt-4 w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
             disabled={files.length === 0 || loading}
           >
-            {loading ? "Uploading..." : "Upload"}
+            {loading ? "Uploading..." : "Upload to IPFS"}
           </button>
         </div>
 
@@ -193,20 +280,8 @@ const FileUploadCard = () => {
             ref={fileInputRef}
             onChange={handleFileChange}
           />
-          
-          
-          
         </div>
-        <div className="ml-58">
-        <br />
-          <input
-        type="text"
-        value={inputValue}
-        onChange={handleInputChange}
-        placeholder="Document name"
-        required
-      />
-      </div>
+
       </span>
     </div>
   );

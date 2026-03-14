@@ -168,10 +168,10 @@ export default function FirestoreTest() {
         {docs.length > 0 ? (
           <div className="relative">
             {/* Carousel Container */}
-            <div className="overflow-hidden h-[500px]">
+            <div className="overflow-hidden min-h-[640px]">
               <div
                 {...handlers}
-                className="flex transition-transform duration-300 ease-out h-full"
+                className="flex transition-transform duration-300 ease-out"
                 style={{
                   transform: `translateX(-${currentIndex * 100}%)`,
                 }}
@@ -180,7 +180,7 @@ export default function FirestoreTest() {
                 {docs.map((docData, index) => (
                   <div
                     key={docData.id}
-                    className={`w-full flex-shrink-0 px-4 h-full transition-all duration-300 ${
+                    className={`w-full flex-shrink-0 px-4 transition-all duration-300 ${
                       index === currentIndex
                         ? "z-10 scale-100"
                         : "z-0 scale-95 opacity-90"
@@ -189,6 +189,7 @@ export default function FirestoreTest() {
                     <DocumentCard
                       documentName={docData.documentName}
                       ipfsHash={docData.ipfsHash}
+                      ocrFields={docData.ocrFields}
                     />
                   </div>
                 ))}
@@ -215,7 +216,7 @@ export default function FirestoreTest() {
                 <button
                   onClick={() => setCurrentIndex((prev) => Math.max(prev - 1, 0))}
                   disabled={currentIndex === 0}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg hover:bg-blue-50 disabled:opacity-30 transition-all"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 bg-white p-3 rounded-full hover:bg-blue-50 disabled:opacity-30 transition-all"
                   aria-label="Previous document"
                 >
                   <svg
@@ -237,7 +238,7 @@ export default function FirestoreTest() {
                     setCurrentIndex((prev) => Math.min(prev + 1, docs.length - 1))
                   }
                   disabled={currentIndex === docs.length - 1}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg hover:bg-blue-50 disabled:opacity-30 transition-all"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 bg-white p-3 rounded-full hover:bg-blue-50 disabled:opacity-30 transition-all"
                   aria-label="Next document"
                 >
                   <svg
@@ -258,7 +259,7 @@ export default function FirestoreTest() {
             )}
           </div>
         ) : (
-          <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+          <div className="bg-white rounded-xl p-8 text-center">
             <svg
               className="mx-auto h-12 w-12 text-gray-400"
               fill="none"
