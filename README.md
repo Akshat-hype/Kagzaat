@@ -183,7 +183,7 @@ Storage
 
 IPFS (Decentralized Storage)
 
-Installation
+# Installation
 
 Clone the repository
 
