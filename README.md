@@ -10,7 +10,7 @@ Manual verification of documents, which is time-consuming, error-prone, and diff
 
 Kagzaat introduces an automated intelligent pipeline that compresses, processes, extracts, and validates documents within seconds.
 
-Key Features
+# Key Features
 1. Automatic Document Compression
 
 Documents uploaded by citizens are automatically optimized during upload.
@@ -133,7 +133,7 @@ Content-addressable document retrieval
 
 Each uploaded document generates an IPFS hash, ensuring integrity and traceability.
 
-System Architecture
+# System Architecture
 
 The Kagzaat pipeline works in the following stages:
 
@@ -160,7 +160,7 @@ IPFS Storage
       │
       ▼
 Verification Report API
-Tech Stack
+# Tech Stack
 Frontend
 
 React.js
@@ -189,7 +189,7 @@ Clone the repository
 
 git clone https://github.com/Akshat-hype/Kagzaat.git
 cd Kagzaat
-Running the Project
+# Running the Project
 
 Both frontend and backend need to be started.
 
@@ -206,7 +206,7 @@ Start Backend
 npm run dev
 Start Frontend
 npm run dev
-API Output Example
+# API Output Example
 
 The system returns:
 
@@ -224,7 +224,7 @@ The system returns:
       confidenceScore: 0.92
   }
 }
-Key Challenges Addressed
+# Key Challenges Addressed
 Efficient Compression
 
 Balancing file size reduction while maintaining OCR readability.
@@ -253,7 +253,7 @@ Real-Time Processing
 
 Designed to process documents within seconds during application submission.
 
-Use Cases
+# Use Cases
 
 Kagzaat can be integrated into:
 
@@ -279,9 +279,9 @@ Template detection for different document types
 
 Blockchain-based document verification
 
-Team
+# Team
 
-Developed for IIT Roorkee Hackathon to build an intelligent document processing system for citizen services.
+Developed for IIT Roorkee Blockathon to build an intelligent document processing system for citizen services.
 
 Project Repository:
 
