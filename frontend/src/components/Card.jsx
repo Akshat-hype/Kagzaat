@@ -1,7 +1,18 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import QrCodeGenerator from "./QrCodeGenerator";
 
 export default function DocumentCard({ documentName, ipfsHash }) {
+  const [docText, setDocText] = useState("");
+  const [isFetchingText, setIsFetchingText] = useState(false);
+  const [fetchError, setFetchError] = useState("");
+
+  const ipfsUrl = useMemo(() => {
+    if (!ipfsHash) return "";
+    return ipfsHash.startsWith("http")
+      ? ipfsHash
+      : `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
+  }, [ipfsHash]);
+
   const downloadTxtFile = () => {
     const element = document.createElement("a");
     const file = new Blob([ipfsHash], { type: 'text/plain' });
@@ -10,6 +21,44 @@ export default function DocumentCard({ documentName, ipfsHash }) {
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
+  };
+
+  const fetchDocText = async () => {
+    if (!ipfsUrl) {
+      setFetchError("No IPFS hash found for this document.");
+      return;
+    }
+
+    setIsFetchingText(true);
+    setFetchError("");
+
+    try {
+      const response = await fetch(ipfsUrl);
+
+      if (!response.ok) {
+        throw new Error(`Unable to fetch file text (${response.status}).`);
+      }
+
+      const contentType = (response.headers.get("content-type") || "").toLowerCase();
+
+      if (
+        contentType &&
+        !contentType.includes("text") &&
+        !contentType.includes("json") &&
+        !contentType.includes("xml") &&
+        !contentType.includes("csv")
+      ) {
+        throw new Error(`This file is not a text document (${contentType}).`);
+      }
+
+      const text = await response.text();
+      setDocText(text || "[Empty file]");
+    } catch (error) {
+      setDocText("");
+      setFetchError(error?.message || "Failed to fetch document text.");
+    } finally {
+      setIsFetchingText(false);
+    }
   };
 
   return (
@@ -50,15 +99,44 @@ export default function DocumentCard({ documentName, ipfsHash }) {
         </div>
       </div>
 
-      {/* Download Button */}
-      <button 
-        onClick={downloadTxtFile}
-        className="mt-6 flex items-center text-white hover:text-blue-200 transition-colors"
-      >
-        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-        </svg>
-      </button>
+      <div className="mt-6 flex flex-wrap gap-3">
+        <button
+          onClick={downloadTxtFile}
+          className="inline-flex items-center rounded-lg bg-white/20 px-4 py-2 text-white hover:bg-white/30 transition-colors"
+        >
+          Download Hash
+        </button>
+        <button
+          onClick={fetchDocText}
+          disabled={isFetchingText}
+          className="inline-flex items-center rounded-lg bg-white px-4 py-2 text-blue-800 hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-70 transition-colors"
+        >
+          {isFetchingText ? "Fetching Text..." : "Fetch Text"}
+        </button>
+        {ipfsUrl && (
+          <a
+            href={ipfsUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center rounded-lg border border-white/50 px-4 py-2 text-white hover:bg-white/20 transition-colors"
+          >
+            Open File
+          </a>
+        )}
+      </div>
+
+      {fetchError && (
+        <p className="mt-4 rounded-md bg-red-100/90 px-3 py-2 text-sm text-red-700">{fetchError}</p>
+      )}
+
+      {docText && (
+        <div className="mt-4 rounded-xl bg-white/15 p-4">
+          <p className="mb-2 text-sm font-semibold text-blue-100">Document Text</p>
+          <pre className="max-h-56 overflow-auto whitespace-pre-wrap rounded-lg bg-black/20 p-3 text-xs text-white">
+            {docText}
+          </pre>
+        </div>
+      )}
     </div>
   );
 }

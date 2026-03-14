@@ -1,8 +1,7 @@
 import React, { useRef, useState } from "react";
 import axios from "axios";
-import { db } from "../firebase"; // your firebase config file
+import { auth, db } from "../firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
 
 const FileUploadCard = () => {
   const [files, setFiles] = useState([]);
@@ -10,6 +9,7 @@ const FileUploadCard = () => {
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
+  const projectId = db.app.options.projectId || "unknown-project";
 
   const JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI5Mzg1Nzg5YS00NWY2LTRjY2YtOTZkNi03ZmQ4OTg1NzQzYzYiLCJlbWFpbCI6ImFiaGlzaGVrY3NlZDU2QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6IkZSQTEifSx7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6Ik5ZQzEifV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiIwNGIyZWUzM2M4ZWRjMmUyODk2MSIsInNjb3BlZEtleVNlY3JldCI6IjEwZjM0NzkxMjI3MWM1OWY5ODgwZWEyYmRlYjk0OTNkMGMwNmFlZWUwN2I2MDMzOGI2YzRlMDUyZDRkNTRhN2IiLCJleHAiOjE3NzU5NDkyNDZ9.rLJXlcWQXH56r5oF5i_bLWVtH0aQTOvDElEdc0nzNcg"; // ⚠️ Replace with .env secret in production
 
@@ -33,7 +33,6 @@ const FileUploadCard = () => {
   };
 
   const handleUpload = async () => {
-    const auth = getAuth();
     const user = auth.currentUser;
 
     if (!user) {
@@ -46,6 +45,7 @@ const FileUploadCard = () => {
     }
 
     setLoading(true);
+    let uploadedIpfsHash = "";
 
     try {
       const formData = new FormData();
@@ -69,22 +69,49 @@ const FileUploadCard = () => {
 
       const hash = res.data.IpfsHash;
       setIpfsHash(hash);
+      uploadedIpfsHash = hash;
 
-      await addDoc(collection(db, "users", user.uid, "uploads"), {
+      const uploadPayload = {
         documentName: inputValue,
         ipfsHash: hash,
+        ownerUid: user.uid,
         createdAt: serverTimestamp(),
-      });
+      };
+
+      try {
+        await addDoc(collection(db, "users", user.uid, "uploads"), uploadPayload);
+      } catch (firestoreWriteError) {
+        // Fallback for projects using top-level uploads rules.
+        if (firestoreWriteError?.code === "permission-denied") {
+          await addDoc(collection(db, "uploads"), uploadPayload);
+        } else {
+          throw firestoreWriteError;
+        }
+      }
 
       alert("Document uploaded and saved!");
       setFiles([]);
       setInputValue("");
     } catch (error) {
       console.error("Upload failed:", error);
-      alert("Upload failed!");
+      if (uploadedIpfsHash && error?.code === "permission-denied") {
+        console.error("Firestore permission denied while saving upload metadata", {
+          projectId,
+          uid: user?.uid,
+          attemptedPaths: [`users/${user?.uid}/uploads`, "uploads"],
+          code: error?.code,
+          message: error?.message,
+        });
+        alert(
+          `Uploaded to IPFS (${uploadedIpfsHash}) but Firestore blocked metadata save. Project: ${projectId}, UID: ${user?.uid}. Update Firestore rules for users/{uid}/uploads or uploads, and verify App Check is not enforcing Firestore for web.`
+        );
+        return;
+      }
+      const firebaseMessage = error?.code ? `${error.code}: ${error.message}` : error?.message;
+      alert(`Upload failed! ${firebaseMessage || "Please check Firestore rules and try again."}`);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
   
   return (

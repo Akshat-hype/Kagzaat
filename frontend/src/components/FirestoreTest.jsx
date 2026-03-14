@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { db, auth } from "../firebase";
-import { collection, getDocs, doc } from "firebase/firestore";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import DocumentCard from "./Card";
 import { useSwipeable } from "react-swipeable";
 import "./DocumentsCarousel.css";
@@ -8,8 +9,10 @@ import "./DocumentsCarousel.css";
 export default function FirestoreTest() {
   const [docs, setDocs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const carouselRef = useRef(null);
+  const projectId = db.app.options.projectId || "unknown-project";
 
   const handlers = useSwipeable({
     onSwipedLeft: () => {
@@ -27,34 +30,120 @@ export default function FirestoreTest() {
   });
 
   useEffect(() => {
-    const fetchDocs = async () => {
-      try {
-        const user = auth.currentUser;
-        if (!user) {
-          console.log("No user is logged in.");
-          return;
-        }
+    let unsubscribeDocs = null;
 
-        const docsRef = collection(db, "users", user.uid, "uploads");
-        const docsSnap = await getDocs(docsRef);
-
-        if (docsSnap.empty) {
-          console.log("No documents found in uploads path.");
-        } else {
-          const fetchedDocs = docsSnap.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
-          setDocs(fetchedDocs);
-        }
-      } catch (error) {
-        console.error("Error fetching Firestore docs:", error);
-      } finally {
-        setLoading(false);
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      if (unsubscribeDocs) {
+        unsubscribeDocs();
+        unsubscribeDocs = null;
       }
-    };
 
-    fetchDocs();
+      if (!user) {
+        setDocs([]);
+        setLoading(false);
+        setError("Please sign in to load your documents.");
+        return;
+      }
+
+      setLoading(true);
+      setError("");
+
+      const docsRef = collection(db, "users", user.uid, "uploads");
+
+      const mapAndSortDocs = (snapshot) =>
+        snapshot.docs
+          .map((docItem) => ({
+            id: docItem.id,
+            ...docItem.data(),
+          }))
+          // Keep newest first while still allowing older docs without createdAt.
+          .sort((a, b) => {
+            const aMs = a.createdAt?.toMillis?.() || 0;
+            const bMs = b.createdAt?.toMillis?.() || 0;
+            return bMs - aMs;
+          });
+
+      unsubscribeDocs = onSnapshot(
+        docsRef,
+        (snapshot) => {
+          const fetchedDocs = mapAndSortDocs(snapshot);
+          setDocs(fetchedDocs);
+          setCurrentIndex((prev) => {
+            if (fetchedDocs.length === 0) return 0;
+            return Math.min(prev, fetchedDocs.length - 1);
+          });
+          setLoading(false);
+        },
+        (firestoreError) => {
+          if (firestoreError?.code !== "permission-denied") {
+            console.error("Error fetching Firestore docs:", firestoreError);
+            setError(
+              firestoreError?.code
+                ? `${firestoreError.code}: ${firestoreError.message}`
+                : "Unable to load documents from Firestore."
+            );
+            setDocs([]);
+            setLoading(false);
+            return;
+          }
+
+          const uid = user?.uid || "unknown-uid";
+          const nestedPath = `users/${uid}/uploads`;
+          console.error("Firestore permission denied on nested uploads path", {
+            projectId,
+            uid,
+            attemptedPath: nestedPath,
+            code: firestoreError?.code,
+            message: firestoreError?.message,
+          });
+
+          // Fallback for projects storing uploads at top-level collection.
+          const legacyQuery = query(
+            collection(db, "uploads"),
+            where("ownerUid", "==", user.uid)
+          );
+
+          if (unsubscribeDocs) {
+            unsubscribeDocs();
+          }
+
+          unsubscribeDocs = onSnapshot(
+            legacyQuery,
+            (legacySnapshot) => {
+              const fetchedDocs = mapAndSortDocs(legacySnapshot);
+              setDocs(fetchedDocs);
+              setCurrentIndex((prev) => {
+                if (fetchedDocs.length === 0) return 0;
+                return Math.min(prev, fetchedDocs.length - 1);
+              });
+              setError(
+                "Using legacy uploads path because users/{uid}/uploads is blocked by rules."
+              );
+              setLoading(false);
+            },
+            (legacyError) => {
+              console.error("Error fetching Firestore docs:", legacyError);
+              const legacyPath = "uploads (where ownerUid == auth.uid)";
+              const details = `Project: ${projectId} | UID: ${uid} | Paths: ${nestedPath}, ${legacyPath}`;
+              setError(
+                legacyError?.code
+                  ? `${legacyError.code}: ${legacyError.message}. ${details}`
+                  : `Unable to load documents from Firestore. ${details}`
+              );
+              setDocs([]);
+              setLoading(false);
+            }
+          );
+        }
+      );
+    });
+
+    return () => {
+      if (unsubscribeDocs) {
+        unsubscribeDocs();
+      }
+      unsubscribeAuth();
+    };
   }, []);
 
   if (loading) {
@@ -69,6 +158,12 @@ export default function FirestoreTest() {
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-blue-800 mb-8">Your Documents</h1>
+
+        {error && (
+          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+            {error}
+          </div>
+        )}
 
         {docs.length > 0 ? (
           <div className="relative">
